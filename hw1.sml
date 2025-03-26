@@ -77,3 +77,20 @@ fun what_month(day_of_year:int) =
 fun month_range(day1:int, day2:int) =
     if day1 > day2 then []
     else what_month(day1) :: month_range(day1 + 1, day2)
+
+fun oldest(dates: (int * int * int) list) : (int * int * int) option =
+    if null dates then NONE
+    else
+        let
+            fun is_older((y1,m1,d1), (y2,m2,d2)) =
+                y1 < y2 orelse (y1 = y2) andalso (m1 < m2 orelse (m1 = m2 andalso d1 < d2))
+            
+            fun find_oldest([]) = NONE
+              | find_oldest([d]) = SOME d
+              | find_oldest(d::ds) =
+                case find_oldest(ds) of
+                    NONE => SOME d
+                  | SOME d' => if is_older(d, d') then SOME d else SOME d'
+        in
+            find_oldest(dates)
+        end
